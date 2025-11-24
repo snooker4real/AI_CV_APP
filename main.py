@@ -22,6 +22,21 @@ load_dotenv(override=True)
 # Initialize Rich Console
 console = Console()
 
+# Futuristic ASCII Art Banner
+BANNER = """
+[bold cyan]╔══════════════════════════════════════════════════════════════════════╗[/bold cyan]
+║   [bright_magenta]██████╗ ██╗   ██║    ██████╗ ███████╗ █████╗ ██████╗ ███████╗██████╗[/bright_magenta]  ║
+║   [bright_magenta]██╔══██╗██║   ██║    ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔════╝██╔══██╗[/bright_magenta]  ║
+║   [bright_cyan]██████╔╝██║   ██║    ██████╔╝█████╗  ███████║██║  ██║█████╗  ██████╔╝[/bright_cyan]  ║
+║   [cyan]██╔══██╗╚██╗ ██╔╝    ██╔══██╗██╔══╝  ██╔══██║██║  ██║██╔══╝  ██╔══██╗[/cyan]  ║
+║   [blue]██║  ██║ ╚████╔╝     ██║  ██║███████╗██║  ██║██████╔╝███████╗██║  ██║[/blue]  ║
+║   [blue]╚═╝  ╚═╝  ╚═══╝      ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝  ╚═╝[/blue]  ║
+[bold cyan]╚══════════════════════════════════════════════════════════════════════╝[/bold cyan]
+
+         [bold bright_magenta]◢◤[/bold bright_magenta] [bold white]CV READER v2.0[/bold white] [bold bright_magenta]◥◣[/bold bright_magenta]
+            [dim bright_cyan]⟨ NEURAL EXTRACTION • DEEP ANALYSIS • SMART SUMMARIZATION ⟩[/dim bright_cyan]
+"""
+
 
 # Main Class Analyze CV
 class PDFReader:
@@ -86,22 +101,24 @@ class PDFReader:
                 reader = PyPDF2.PdfReader(f)
                 total_pages = len(reader.pages)
 
-                console.print(f"[cyan]📄 Extracting text from {total_pages} page(s)...[/cyan]")
+                console.print(f"\n[bold bright_cyan]▶ INITIATING NEURAL EXTRACTION PROTOCOL...[/bold bright_cyan]")
+                console.print(f"[bright_magenta]⚡ SCANNING {total_pages} PAGE(S) ⚡[/bright_magenta]\n")
 
                 text = ""
                 with Progress(
-                    SpinnerColumn(),
-                    TextColumn("[progress.description]{task.description}"),
-                    BarColumn(),
-                    TaskProgressColumn(),
+                    SpinnerColumn(spinner_name="dots12"),
+                    TextColumn("[bold bright_cyan]▸[/bold bright_cyan] [progress.description]"),
+                    BarColumn(bar_width=40, style="bright_cyan", complete_style="bright_magenta", finished_style="bright_green"),
+                    TaskProgressColumn(style="bright_white"),
                     console=console
                 ) as progress:
-                    task = progress.add_task("[green]Reading pages...", total=total_pages)
+                    task = progress.add_task("[bright_white]⟨ EXTRACTING DATA ⟩", total=total_pages)
 
                     for page_num, page in enumerate(reader.pages, 1):
                         text += page.extract_text() + "\n"
-                        progress.update(task, advance=1, description=f"[green]Reading page {page_num}/{total_pages}")
+                        progress.update(task, advance=1, description=f"[bright_white]⟨ PAGE {page_num}/{total_pages} • PROCESSING ⟩")
 
+                console.print(f"[bold bright_green]✓ EXTRACTION COMPLETE • DATA STREAM SECURED[/bold bright_green]\n")
                 return text.strip()
         except Exception as e:
             raise Exception(f"Error with PDF: {e}")
@@ -218,40 +235,42 @@ class PDFReader:
 
     # Summarize the PDF
     def summarize_pdf(self, pdf_path:str, maxLength:int = 200, chunk_size:int = 400) -> str:
-        console.print(f"\n[bold magenta]🤖 Starting AI Summarization[/bold magenta]")
-        console.print(f"[dim]Using model: {self.model}[/dim]\n")
+        console.print(f"\n[bold bright_magenta]╔═══════════════════════════════════════════════════╗[/bold bright_magenta]")
+        console.print(f"[bold bright_magenta]║[/bold bright_magenta]  [bold bright_white]⚡ QUANTUM A.I. ANALYSIS ENGINE ONLINE ⚡[/bold bright_white]  [bold bright_magenta]║[/bold bright_magenta]")
+        console.print(f"[bold bright_magenta]╚═══════════════════════════════════════════════════╝[/bold bright_magenta]")
+        console.print(f"[dim bright_cyan]⟨ MODEL: {self.model.upper()} • STATUS: ACTIVE ⟩[/dim bright_cyan]\n")
 
         text = self.extract_text(pdf_path)
 
         if not text.strip():
-            return "No text found in PDF!"
+            return "⚠ NO DATA DETECTED IN QUANTUM FIELD"
 
         text_length = len(text)
-        console.print(f"[cyan]📊 Extracted text length: {text_length:,} characters[/cyan]\n")
+        console.print(f"[bright_cyan]▸ DATA MATRIX SIZE: [bold bright_white]{text_length:,}[/bold bright_white] CHARS[/bright_cyan]\n")
 
         if text_length <= chunk_size:
-            console.print("[yellow]💡 Text fits in single chunk, processing...[/yellow]")
-            with console.status("[bold green]Generating summary...", spinner="dots"):
+            console.print("[bright_yellow]⟨ SINGLE QUANTUM PROCESSING MODE ENGAGED ⟩[/bright_yellow]")
+            with console.status("[bold bright_green]⟨ A.I. NEURAL SYNTHESIS IN PROGRESS ⟩", spinner="bouncingBall"):
                 return self.summarize_chunks(text, maxLength)
 
         chunks = self.chunk_text(text, chunk_size)
         num_chunks = len(chunks)
-        console.print(f"[yellow]✂️  Split into {num_chunks} chunk(s) for processing[/yellow]\n")
+        console.print(f"[bright_yellow]▸ FRAGMENTING DATA INTO {num_chunks} QUANTUM CHUNK(S)[/bright_yellow]\n")
 
         summaries = []
 
         with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            BarColumn(),
-            TaskProgressColumn(),
+            SpinnerColumn(spinner_name="dots12"),
+            TextColumn("[bold bright_cyan]▸[/bold bright_cyan] [progress.description]"),
+            BarColumn(bar_width=40, style="bright_cyan", complete_style="bright_magenta", finished_style="bright_green"),
+            TaskProgressColumn(style="bright_white"),
             console=console
         ) as progress:
-            task = progress.add_task("[cyan]Summarizing chunks...", total=num_chunks)
+            task = progress.add_task("[bright_white]⟨ NEURAL ANALYSIS ACTIVE ⟩", total=num_chunks)
 
             for i, chunk in enumerate(chunks, 1):
                 chunk_max_length = maxLength // num_chunks
-                progress.update(task, description=f"[cyan]Processing chunk {i}/{num_chunks}")
+                progress.update(task, description=f"[bright_white]⟨ QUANTUM CHUNK {i}/{num_chunks} • SYNTHESIZING ⟩")
 
                 summary = self.summarize_chunks(chunk, chunk_max_length)
                 summaries.append(summary)
@@ -260,8 +279,8 @@ class PDFReader:
         combined_output = " ".join(summaries)
 
         if len(combined_output) > maxLength:
-            console.print("\n[yellow]🔄 Refining combined summary...[/yellow]")
-            with console.status("[bold green]Generating final summary...", spinner="dots"):
+            console.print("\n[bright_yellow]⟨ INITIATING FINAL SYNTHESIS PROTOCOL ⟩[/bright_yellow]")
+            with console.status("[bold bright_green]⟨ COMPRESSING NEURAL OUTPUT ⟩", spinner="bouncingBall"):
                 return self.summarize_chunks(combined_output, maxLength)
 
         return combined_output
@@ -286,35 +305,44 @@ def main():
 
     args = parser.parse_args()
 
-    # Print welcome banner
-    console.print(Panel.fit(
-        "[bold cyan]AI-Powered CV/Resume Reader[/bold cyan]\n"
-        "[dim]Extract, Analyze, and Summarize CVs with AI[/dim]",
-        border_style="cyan",
-        box=box.DOUBLE
-    ))
+    # Print futuristic banner
+    console.print(BANNER)
 
     pdf_file = Path(args.pdf_path)
     if not pdf_file.exists():
-        console.print(f"[bold red]❌ Error:[/bold red] PDF file not found at: {pdf_file}")
+        console.print(Panel(
+            f"[bold bright_red]⚠ CRITICAL ERROR: DOCUMENT NOT FOUND[/bold bright_red]\n\n"
+            f"[bright_white]Path: {pdf_file}[/bright_white]\n"
+            f"[dim]System cannot locate the specified PDF file in the quantum field.[/dim]",
+            title="[bold bright_red]⚡ SYSTEM ALERT ⚡[/bold bright_red]",
+            border_style="bright_red",
+            box=box.HEAVY
+        ))
         sys.exit(1)
 
     try:
         # Determine if using local or cloud model
         local_models = ["llama3", "deepseek-r1", "granite"]
         is_local = args.provider in local_models
-        model_type = "Local (Docker)" if is_local else "Cloud API"
+        model_type = "◢ LOCAL QUANTUM ◣" if is_local else "☁ CLOUD NETWORK"
 
-        # Create configuration table
-        config_table = Table(title="Configuration", box=box.ROUNDED, show_header=True, header_style="bold magenta")
-        config_table.add_column("Setting", style="cyan", justify="right")
-        config_table.add_column("Value", style="green")
+        # Create futuristic configuration table
+        config_table = Table(
+            title="[bold bright_magenta]⟨ SYSTEM CONFIGURATION ⟩[/bold bright_magenta]",
+            box=box.HEAVY_HEAD,
+            show_header=True,
+            header_style="bold bright_cyan",
+            border_style="bright_cyan",
+            title_style="bold bright_magenta"
+        )
+        config_table.add_column("⚡ PARAMETER", style="bright_cyan", justify="right", no_wrap=True)
+        config_table.add_column("◢ VALUE", style="bright_white", justify="left")
 
-        config_table.add_row("📄 PDF File", pdf_file.name)
-        config_table.add_row("🤖 Provider", args.provider.upper())
-        config_table.add_row("🏷️  Model Type", model_type)
-        config_table.add_row("📏 Max Length", f"{args.max_length} words")
-        config_table.add_row("✂️  Chunk Size", f"{args.chunk_size} chars")
+        config_table.add_row("▸ TARGET FILE", f"[bright_green]{pdf_file.name}[/bright_green]")
+        config_table.add_row("▸ A.I. PROVIDER", f"[bright_magenta]{args.provider.upper()}[/bright_magenta]")
+        config_table.add_row("▸ MODEL TYPE", f"[bright_yellow]{model_type}[/bright_yellow]")
+        config_table.add_row("▸ OUTPUT LENGTH", f"[bright_white]{args.max_length}[/bright_white] [dim]words[/dim]")
+        config_table.add_row("▸ QUANTUM CHUNK", f"[bright_white]{args.chunk_size}[/bright_white] [dim]chars[/dim]")
 
         console.print(config_table)
 
@@ -326,72 +354,96 @@ def main():
             chunk_size=args.chunk_size,
         )
 
-        # Display summary in a styled panel
+        # Display summary in a futuristic panel
         console.print("\n")
+        console.print("[bold bright_green]" + "═" * 70 + "[/bold bright_green]")
         summary_panel = Panel(
-            summary,
-            title="[bold green]✨ CV Summary[/bold green]",
-            border_style="green",
-            box=box.ROUNDED,
+            f"[bright_white]{summary}[/bright_white]",
+            title="[bold bright_green]⚡ ◢ NEURAL SYNTHESIS COMPLETE ◣ ⚡[/bold bright_green]",
+            subtitle="[dim bright_cyan]⟨ ANALYSIS TERMINATED • DATA READY ⟩[/dim bright_cyan]",
+            border_style="bright_green",
+            box=box.DOUBLE_EDGE,
             padding=(1, 2)
         )
         console.print(summary_panel)
+        console.print("[bold bright_green]" + "═" * 70 + "[/bold bright_green]")
 
         if args.output:
             output_file = Path(args.output)
             with open(output_file, "w", encoding="utf-8") as file:
                 file.write(summary)
-            console.print(f"\n[bold green]✅ Summary saved to:[/bold green] [cyan]{output_file}[/cyan]")
+            console.print(f"\n[bold bright_green]✓ DATA EXPORTED TO:[/bold bright_green] [bright_cyan]{output_file}[/bright_cyan]")
+            console.print(f"[dim]⟨ File saved successfully to quantum storage ⟩[/dim]")
 
     except Exception as e:
         error_msg = str(e)
-        console.print(f"\n[bold red]❌ ERROR:[/bold red] {error_msg}\n")
+        console.print(f"\n[bold bright_red]⚠ ═══════════════════════════════════════════════════ ⚠[/bold bright_red]")
+        console.print(Panel(
+            f"[bold bright_red]SYSTEM MALFUNCTION DETECTED[/bold bright_red]\n\n"
+            f"[bright_white]{error_msg}[/bright_white]",
+            title="[bold bright_red]⚡ CRITICAL ERROR ⚡[/bold bright_red]",
+            border_style="bright_red",
+            box=box.HEAVY,
+            padding=(1, 2)
+        ))
 
         # Provide helpful hints for common errors
         local_models = ["llama3", "deepseek-r1", "granite"]
         if args.provider in local_models:
             if "docker model run failed" in error_msg.lower() or "no such file" in error_msg.lower():
                 console.print(Panel(
-                    "[yellow]Docker model run error. Please ensure:[/yellow]\n\n"
-                    "  1. Docker Desktop is running\n"
-                    f"  2. The model is available (run: [cyan]docker model ls[/cyan])\n"
-                    f"  3. Test the model with: [cyan]docker model run {args.provider} \"Hello\"[/cyan]",
-                    title="💡 Troubleshooting",
-                    border_style="yellow",
-                    box=box.ROUNDED
+                    "[bright_yellow]⚠ QUANTUM ENGINE OFFLINE ⚠[/bright_yellow]\n\n"
+                    "[bright_white]Diagnostic Protocol:[/bright_white]\n"
+                    "  [bright_cyan]▸[/bright_cyan] Verify Docker Desktop is running\n"
+                    f"  [bright_cyan]▸[/bright_cyan] Check model availability: [dim]docker model ls[/dim]\n"
+                    f"  [bright_cyan]▸[/bright_cyan] Test connection: [dim]docker model run {args.provider} \"Hello\"[/dim]\n\n"
+                    "[dim]⟨ System requires active Docker Model Runner ⟩[/dim]",
+                    title="[bold bright_yellow]⟨ TROUBLESHOOTING PROTOCOL ⟩[/bold bright_yellow]",
+                    border_style="bright_yellow",
+                    box=box.HEAVY_HEAD
                 ))
             elif "timed out" in error_msg.lower():
                 console.print(Panel(
-                    "[yellow]The model took too long to respond (>120 seconds).[/yellow]\n\n"
-                    "Consider using a smaller chunk size with the [cyan]-c[/cyan] flag.",
-                    title="⏱️  Timeout Issue",
-                    border_style="yellow",
-                    box=box.ROUNDED
+                    "[bright_yellow]⚡ NEURAL TIMEOUT DETECTED ⚡[/bright_yellow]\n\n"
+                    "[bright_white]The quantum processor exceeded maximum response time (>120s)[/bright_white]\n\n"
+                    "[bright_cyan]▸ SOLUTION:[/bright_cyan] Reduce chunk size with [dim]-c[/dim] flag\n"
+                    "[dim]⟨ Smaller chunks = faster processing ⟩[/dim]",
+                    title="[bold bright_yellow]⟨ TIMEOUT ERROR ⟩[/bold bright_yellow]",
+                    border_style="bright_yellow",
+                    box=box.HEAVY_HEAD
                 ))
         elif "insufficient_quota" in error_msg.lower() or "quota" in error_msg.lower():
             console.print(Panel(
-                "[yellow]This is an API quota issue.[/yellow]\n\n"
-                "Please check your billing/credits for the selected provider.",
-                title="💳 Quota Issue",
-                border_style="yellow",
-                box=box.ROUNDED
+                "[bright_yellow]⚡ API QUOTA EXCEEDED ⚡[/bright_yellow]\n\n"
+                "[bright_white]Cloud network resources depleted[/bright_white]\n\n"
+                "[bright_cyan]▸ ACTION:[/bright_cyan] Verify billing and credits\n"
+                "[dim]⟨ Contact your provider for quota increase ⟩[/dim]",
+                title="[bold bright_yellow]⟨ QUOTA ERROR ⟩[/bold bright_yellow]",
+                border_style="bright_yellow",
+                box=box.HEAVY_HEAD
             ))
         elif "insufficient balance" in error_msg.lower() or "credit balance" in error_msg.lower():
             console.print(Panel(
-                "[yellow]This is an API balance issue.[/yellow]\n\n"
-                "Please add credits to your account.",
-                title="💰 Balance Issue",
-                border_style="yellow",
-                box=box.ROUNDED
+                "[bright_yellow]⚡ INSUFFICIENT CREDITS ⚡[/bright_yellow]\n\n"
+                "[bright_white]Account balance too low for operation[/bright_white]\n\n"
+                "[bright_cyan]▸ ACTION:[/bright_cyan] Add credits to your account\n"
+                "[dim]⟨ Recharge required to continue ⟩[/dim]",
+                title="[bold bright_yellow]⟨ BALANCE ERROR ⟩[/bold bright_yellow]",
+                border_style="bright_yellow",
+                box=box.HEAVY_HEAD
             ))
         elif "api key" in error_msg.lower():
             console.print(Panel(
-                f"[yellow]Make sure your [cyan]{args.provider.upper()}_API_KEY[/cyan] is set in the .env file.[/yellow]",
-                title="🔑 API Key Issue",
-                border_style="yellow",
-                box=box.ROUNDED
+                "[bright_yellow]⚡ AUTHENTICATION FAILURE ⚡[/bright_yellow]\n\n"
+                f"[bright_white]Missing or invalid API credentials[/bright_white]\n\n"
+                f"[bright_cyan]▸ REQUIRED:[/bright_cyan] Set [bright_magenta]{args.provider.upper()}_API_KEY[/bright_magenta] in .env\n"
+                "[dim]⟨ Secure quantum authentication required ⟩[/dim]",
+                title="[bold bright_yellow]⟨ AUTH ERROR ⟩[/bold bright_yellow]",
+                border_style="bright_yellow",
+                box=box.HEAVY_HEAD
             ))
 
+        console.print(f"[bold bright_red]⚠ ═══════════════════════════════════════════════════ ⚠[/bold bright_red]\n")
         sys.exit(1)
 
 
